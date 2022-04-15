@@ -6,27 +6,36 @@
         System.Text.StringBuilder? buffer, int bufferSize, IntPtr hwndCallback);
 
     private string aliasName = "MediaFile";
+    private string cmd = "";
 
     //メディアのロードメソッド
     private void MediaLoad()
     {
         //再生するファイル名
-        string fileName = "D:\\Music\\MIDI\\disgtel.mid";
-        string cmd;
+        string fileName = "D:\\Music\\MIDI\\Roundabout.mid";
         //ファイルを開く
         Console.WriteLine("Loading...");
         cmd = "open \"" + fileName + "\" alias " + aliasName;
         mciSendString(cmd, null, 0, IntPtr.Zero);
+    }
+    private void MediaPlay()
+    {
         //ファイルの再生
         cmd = "play " + aliasName;
         mciSendString(cmd, null, 0, IntPtr.Zero);
-        Console.WriteLine("Loaded");
+        Console.WriteLine("Now Playing");
     }
 
-    public void MidiStop()
+    public void MediaStop()
     {
-        string cmd;
-        //再生しているWAVEを停止する
+        //再生を停止する
+        cmd = "stop " + aliasName;
+        mciSendString(cmd, null, 0, IntPtr.Zero);
+    }
+
+    public void MediaEnd()
+    {
+        //再生を停止する
         cmd = "stop " + aliasName;
         mciSendString(cmd, null, 0, IntPtr.Zero);
         //閉じる
@@ -41,13 +50,33 @@
         //キー入力変数
         ConsoleKeyInfo key;
         MidiPlayer player = new MidiPlayer();
+
         while (isLoopFlag)
         {
-            Console.WriteLine("Press the spacebar to play");
+            Console.WriteLine("[L]oad 読み込み");
+            Console.WriteLine("[Space] 再生");
+            Console.WriteLine("[S]top 停止");
+            Console.WriteLine("[Q]uit 終了");
+            Console.WriteLine("[Escape] 閉じる");
             key = Console.ReadKey(true);
-            if (key.Key == ConsoleKey.Spacebar)
+            switch(key.Key)
             {
-                player.MediaLoad();
+                case ConsoleKey.L:
+                    player.MediaLoad();
+                    break;
+                case ConsoleKey.Spacebar:
+                    player.MediaPlay();
+                    break;
+                case ConsoleKey.Q:
+                    player.MediaEnd();
+                    break;
+                case ConsoleKey.S:
+                    player.MediaStop();
+                    break;
+                case ConsoleKey.Escape:
+                    isLoopFlag = false;
+                    break;
+
             }
 
         }
